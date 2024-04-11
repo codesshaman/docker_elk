@@ -22,11 +22,14 @@ help:
 	@echo -e "$(OK_COLOR)==== All commands of ${name} configuration ====$(NO_COLOR)"
 	@echo -e "$(WARN_COLOR)- make				: Launch configuration"
 	@echo -e "$(WARN_COLOR)- make build			: Building configuration"
+	@echo -e "$(WARN_COLOR)- make conel			: Connect to elastic container"
+	@echo -e "$(WARN_COLOR)- make conki			: Connect to kibana container"
+	@echo -e "$(WARN_COLOR)- make conls			: Connect to logstash container"
 	@echo -e "$(WARN_COLOR)- make down			: Stopping configuration"
 	@echo -e "$(WARN_COLOR)- make push			: Push changes to the github"
 	@echo -e "$(WARN_COLOR)- make re			: Rebuild configuration"
 	@echo -e "$(WARN_COLOR)- make reel			: Rebuild elasticsearch configuration"
-	@echo -e "$(WARN_COLOR)- make reka			: Rebuild kibana configuration"
+	@echo -e "$(WARN_COLOR)- make reki			: Rebuild kibana configuration"
 	@echo -e "$(WARN_COLOR)- make rels			: Rebuild logstash configuration"
 	@echo -e "$(WARN_COLOR)- make ps			: View configuration"
 	@echo -e "$(WARN_COLOR)- make clean			: Cleaning configuration$(NO_COLOR)"
@@ -34,6 +37,18 @@ help:
 build:
 	@printf "$(YELLOW)==== Building configuration ${name}... ====$(NO_COLOR)\n"
 	@docker-compose -f ./docker-compose.yml up -d --build
+
+conel:
+	@printf "$(ERROR_COLOR)==== Connect to Elastic container... ====$(NO_COLOR)\n"
+	@docker exec -it elasticsearch bash
+
+conki:
+	@printf "$(ERROR_COLOR)==== Connect to Kibana container... ====$(NO_COLOR)\n"
+	@docker exec -it kibana bash
+
+conls:
+	@printf "$(ERROR_COLOR)==== Connect to Logstash container... ====$(NO_COLOR)\n"
+	@docker exec -it logstash bash
 
 down:
 	@printf "$(ERROR_COLOR)==== Stopping configuration ${name}... ====$(NO_COLOR)\n"
@@ -54,7 +69,7 @@ rels:
 	@printf "$(OK_COLOR)==== Rebuild postgres... ====$(NO_COLOR)\n"
 	@docker-compose -f ./docker-compose.yml up -d --no-deps --build Logstash
 
-reka:
+reki:
 	@printf "$(OK_COLOR)==== Rebuild pgadmin... ====$(NO_COLOR)\n"
 	@docker-compose -f ./docker-compose.yml up -d --no-deps --build Kibana
 
