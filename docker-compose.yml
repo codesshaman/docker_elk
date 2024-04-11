@@ -1,0 +1,50 @@
+version: "3.6"
+services:
+  Elasticsearch:
+    image: $ELASTIC_IMAGE
+    container_name: elasticsearch
+    restart: unless-stopped
+    volumes:
+    - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+    ports:
+    - "$ELASTIC_HTTP:9200"
+    - "$ELASTIC_NODE:9300"
+    networks:
+      - elk
+
+  Logstash:
+    image: $LOGSTASH_IMAGE
+    container_name: logstash
+    restart: unless-stopped
+    volumes:
+    - ./logstash/:/logstash_dir
+    command: logstash -f /logstash_dir/logstash.conf
+    depends_on:
+      - Elasticsearch
+    ports:
+    - "$BEATS_PORT:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  Kibana:
+    image: $KIBANA_IMAGE
+    container_name: kibana
+    restart: unless-stopped
+    ports:
+    - "$KIBANA_PORT:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - Elasticsearch
+    networks:
+      - elk
+volumes:
+  elastic_data: {}
+
+networks:
+  elk:
